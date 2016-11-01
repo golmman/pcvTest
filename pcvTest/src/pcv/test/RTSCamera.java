@@ -41,12 +41,15 @@ public class RTSCamera implements AnalogListener, ActionListener {
 			CameraInput.RTSCAM_LOWER,
 			CameraInput.RTSCAM_MOVEDRAG,
 			CameraInput.RTSCAM_ROTATEDRAG };
+	
+	private static final float HS_SIZE = 0.05f;
 
 	protected Camera cam;
 	protected Vector3f initialBackVec;
 	protected float rotationSpeed = 3.0f;
 	protected float moveSpeedBase = 3.0f;
 	protected float moveSpeed = 3.0f;
+	protected float hotspotSize = 1.0f;
 	protected boolean enabled = true;
 	protected boolean canMove = false;
 	protected boolean canRotate = false;
@@ -66,6 +69,7 @@ public class RTSCamera implements AnalogListener, ActionListener {
 		float near = cam.getFrustumNear();
 		float z = cam.getLocation().z;
 		moveSpeed = 2.0f * z * h/near;
+		hotspotSize = HS_SIZE * moveSpeed;
 	}
 
 	/**
@@ -197,6 +201,7 @@ public class RTSCamera implements AnalogListener, ActionListener {
 		
 		// adjust moveSpeed to camera height
 		moveSpeed = 2.0f * z * h/near;
+		hotspotSize = HS_SIZE * moveSpeed;
 		
 		Vector3f vel = new Vector3f(0, 0, v);//value * moveSpeed);
 		Vector3f pos = cam.getLocation().clone();
@@ -257,6 +262,10 @@ public class RTSCamera implements AnalogListener, ActionListener {
 			canRotate = value;
 			//inputManager.setCursorVisible(!value);
 		}
+	}
+
+	public float getHotspotSize() {
+		return hotspotSize;
 	}
 
 }
