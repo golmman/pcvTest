@@ -7,21 +7,21 @@ import com.jme3.app.state.AppStateManager;
 public class RTSCameraAppState extends AbstractAppState {
 
     private Application app;
-    private RTSCamera testCam;
+    private RTSCamera rtsCam;
 
     public RTSCameraAppState(RTSCamera fc) {
-    	testCam = fc;
+    	rtsCam = fc;
     }    
 
     /**
      *  This is called by SimpleApplication during initialise().
      */
-    void setCamera( RTSCamera cam ) {
-        this.testCam = cam;
+    void setCamera(RTSCamera cam) {
+        this.rtsCam = cam;
     }
     
     public RTSCamera getCamera() {
-        return testCam;
+        return rtsCam;
     }
 
     @Override
@@ -31,12 +31,13 @@ public class RTSCameraAppState extends AbstractAppState {
         this.app = app;
 
         if (app.getInputManager() != null) {
-        
-            if (testCam == null) {
-                testCam = new RTSCamera(app.getCamera());
+
+            if (rtsCam == null) {
+            	throw new IllegalStateException("How is this possible?");
+                //testCam = new RTSCamera(app.getCamera());
             }
             
-            testCam.registerWithInput(app.getInputManager());            
+            rtsCam.registerApp(app.getInputManager());            
         }               
     }
             
@@ -44,7 +45,7 @@ public class RTSCameraAppState extends AbstractAppState {
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
         
-        testCam.setEnabled(enabled);
+        rtsCam.setEnabled(enabled);
     }
     
     @Override
@@ -52,7 +53,7 @@ public class RTSCameraAppState extends AbstractAppState {
         super.cleanup();
 
         if (app.getInputManager() != null) {        
-            testCam.unregisterInput();
+            rtsCam.unregisterInput();
         }        
     }
 }
