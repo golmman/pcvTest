@@ -191,6 +191,14 @@ public class TestMain extends SimpleApplication {
 				200, 250, 450, 300};
 		
 		LinePicker.init(this, lines, imgW, imgH, 20);
+		LinePicker.close();
+		
+		int[] lines2 = {
+				200, 300, 0, 0,
+				100, 300, 50, 50,
+				200, 250, 450, 300};
+		
+		LinePicker.init(this, lines2, imgW, imgH, 20);
 	}
 
 	@Override

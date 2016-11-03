@@ -2,6 +2,7 @@ package pcv.algo;
 
 import java.util.ArrayList;
 
+import com.jme3.input.InputManager;
 import com.jme3.input.MouseInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.MouseButtonTrigger;
@@ -15,20 +16,16 @@ import com.jme3.scene.shape.Line;
 import pcv.test.RTSCamera;
 import pcv.test.TestMain;
 
-public class LinePicker {
+public class LinePicker extends LinePickerNative {
 
 	private LinePicker() {}
-	private static native void init(int[] lines, int imgW, int imgH, int gridSize);
-	public static native void release(); // TODO: rename to close()
-	public static native int[] pick(int x, int y, float hotSpotSize);
-	
-	
-	
+
 	
 	private static final float LINE_Z = 0.0f;
 	private static final String PICK_MAPPING = "CursorPick";
 	
 	private static RTSCamera rtsCam;
+	private static InputManager inputManager;
 	
 	private static Node nodeLines;
 	private static Material matDormant;
@@ -70,9 +67,10 @@ public class LinePicker {
 		init(lines, imgW, imgH, gridSize);
 		
 		rtsCam = app.getRtsCam();
+		inputManager = app.getInputManager();
 		
-		app.getInputManager().addMapping(PICK_MAPPING, new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
-		app.getInputManager().addListener(actionListener, PICK_MAPPING);
+		inputManager.addMapping(PICK_MAPPING, new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
+		inputManager.addListener(actionListener, PICK_MAPPING);
 		
 		matDormant = new Material(app.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
 		matDormant.setColor("Color", ColorRGBA.Blue);
@@ -81,11 +79,10 @@ public class LinePicker {
 		matSelected.setColor("Color", ColorRGBA.Red);
 		
 		
-		geomLinesSelected = new ArrayList<Geometry>();
-		
 		nodeLines = new Node("nodeLines");
 		
 		geomLines = linesToGeometry(lines);
+		geomLinesSelected = new ArrayList<Geometry>();
 		
 		app.getRootNode().attachChild(nodeLines);
 	}
@@ -109,5 +106,14 @@ public class LinePicker {
 	}
 	
 	
+	
+	public static void close() {
+		nodeLines.detachAllChildren();
+		nodeLines.getParent().detachChild(nodeLines);
+		inputManager.removeListener(actionListener);
+		inputManager.deleteMapping(PICK_MAPPING);
+		
+		release();
+	}
 
 }
